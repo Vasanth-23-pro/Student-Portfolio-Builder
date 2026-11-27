@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { GraduationCap, Menu, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
@@ -8,8 +9,10 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const firstNavLinkRef = useRef(null)
   const menuToggleRef = useRef(null)
+
   const sectionLink = (section) =>
     pathname === '/' ? `#${section}` : `/#${section}`
+
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false)
 
@@ -24,16 +27,48 @@ function Navbar() {
     firstNavLinkRef.current?.focus()
 
     function handleKeyDown(event) {
-      if (event.key === 'Escape') closeMenu()
+      if (event.key === 'Escape') {
+        closeMenu()
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const nav = document.getElementById('landing-navigation')
+      const focusableElements = nav?.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      )
+
+      if (!focusableElements?.length) return
+
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault()
+        lastElement.focus()
+      } else if (
+        !event.shiftKey &&
+        document.activeElement === lastElement
+      ) {
+        event.preventDefault()
+        firstElement.focus()
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown)
+
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [closeMenu, isMenuOpen])
 
   return (
     <header className="landing-navbar">
-      <Link className="landing-brand" to="/" aria-label="Student Portfolio Builder home" onClick={closeMenu}>
+      <Link
+        className="landing-brand"
+        to="/"
+        aria-label="Student Portfolio Builder home"
+        onClick={closeMenu}
+      >
         <span className="landing-brand__icon" aria-hidden="true">
           <GraduationCap size={22} />
         </span>
@@ -47,11 +82,21 @@ function Navbar() {
         id="landing-navigation"
         aria-label="Main navigation"
       >
-        <NavLink end onClick={closeMenu} ref={firstNavLinkRef} to="/">Home</NavLink>
-        <Link onClick={closeMenu} to={sectionLink('features')}>Features</Link>
-        <Link onClick={closeMenu} to={sectionLink('templates')}>Templates</Link>
-        <Link onClick={closeMenu} to={sectionLink('about')}>About</Link>
-        <Link className="landing-nav__login" onClick={closeMenu} to="/login">Login</Link>
+        <NavLink end onClick={closeMenu} ref={firstNavLinkRef} to="/">
+          Home
+        </NavLink>
+        <Link onClick={closeMenu} to={sectionLink('features')}>
+          Features
+        </Link>
+        <Link onClick={closeMenu} to={sectionLink('templates')}>
+          Templates
+        </Link>
+        <Link onClick={closeMenu} to={sectionLink('about')}>
+          About
+        </Link>
+        <Link className="landing-nav__login" onClick={closeMenu} to="/login">
+          Login
+        </Link>
         <Link className="landing-nav__cta" onClick={closeMenu} to="/register">
           Get Started
         </Link>
@@ -68,7 +113,11 @@ function Navbar() {
           ref={menuToggleRef}
           type="button"
         >
-          {isMenuOpen ? <X aria-hidden="true" size={20} /> : <Menu aria-hidden="true" size={20} />}
+          {isMenuOpen ? (
+            <X aria-hidden="true" size={20} />
+          ) : (
+            <Menu aria-hidden="true" size={20} />
+          )}
         </button>
       </div>
     </header>
