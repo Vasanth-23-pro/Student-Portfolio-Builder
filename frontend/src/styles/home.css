@@ -1030,6 +1030,11 @@
     display: none;
     align-items: stretch;
     flex-direction: column;
+    justify-content: flex-start;
+    max-height: calc(100vh - 88px);
+    max-height: calc(100dvh - 88px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     gap: 0;
     margin: 0;
     padding: var(--space-2);
@@ -1044,6 +1049,9 @@
   }
 
   .landing-nav > a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     padding: 12px;
     border-radius: var(--radius-small);
   }
@@ -1054,6 +1062,7 @@
   }
 
   .landing-nav > .landing-nav__cta {
+    min-height: 44px;
     margin-top: var(--space-1);
   }
 
